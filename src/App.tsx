@@ -1,18 +1,35 @@
 import { useSelector, useDispatch } from 'react-redux'
 
-import { addTodo } from 'features/todos/todosSlice'
+import { getTodos } from 'redux/slices/todos/todosSlice'
 
-import { getTodos } from 'features/todos/todosSlice'
+import { useEffect } from 'react'
+
+import { getError } from 'redux/slices/error/errorSlice'
+import { Link } from 'react-router-dom'
+import { GET_TODOS_REQUESTED } from 'redux/sagas/todos/actionTypes'
 
 function App() {
   const todos = useSelector(getTodos)
 
+  const error = useSelector(getError)
+
   const dispatch = useDispatch()
 
+  useEffect(() => {
+    dispatch({ type: GET_TODOS_REQUESTED })
+  }, [])
+
   return (
-    <div>
-      <button onClick={() => dispatch(addTodo(7))}>Add Item</button>
-    </div>
+    <ul>
+      {todos.length &&
+        todos.map((item, indx) => {
+          return (
+            <li key={indx}>
+              <Link to={'/' + item.id}>{item.title}</Link>
+            </li>
+          )
+        })}
+    </ul>
   )
 }
 
